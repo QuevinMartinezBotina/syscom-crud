@@ -1,5 +1,3 @@
-Aquí te dejo un ejemplo completo y organizado en un solo bloque Markdown para que puedas copiar y pegar directamente en tu archivo README.md:
-
 ```markdown
 # Gestión de Usuarios y Roles – CRUD con API en Laravel
 
