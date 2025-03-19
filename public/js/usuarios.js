@@ -1,5 +1,3 @@
-// public/js/usuarios.js
-
 // Inicializo DataTable y obtengo los usuarios al cargar el documento
 $(document).ready(function () {
     $("#tablaUsuarios").DataTable();
@@ -21,11 +19,11 @@ $("#formUsuario").submit(function (e) {
     axios
         .post("/api/usuarios", formData)
         .then((response) => {
-            // Si el código de estado es 201, mostramos el mensaje de éxito.
+            // Si el código de estado es 201, muestro el mensaje de éxito.
             if (response.status === 201) {
                 alert(response.data.message);
                 $("#formUsuario")[0].reset();
-                // Puedes recargar la tabla o incluso la página si lo prefieres:
+                // Recargo la tabla de usuarios
                 obtenerUsuarios();
                 // Para recargar la página completa: window.location.reload();
             } else {
@@ -35,7 +33,7 @@ $("#formUsuario").submit(function (e) {
         })
         .catch((error) => {
             let mensaje = "Error al crear usuario";
-            // Si hay detalles de error en la respuesta del servidor, los mostramos.
+            // Si hay detalles de error en la respuesta del servidor, los muestro.
             if (error.response && error.response.data) {
                 if (error.response.data.message) {
                     mensaje = error.response.data.message;
@@ -137,7 +135,7 @@ function cargarDatosUsuario(id) {
         });
 }
 
-// Al cargar la página, obtenemos el ID del formulario y llamamos a la función para cargar datos
+// Al cargar la página, obtengo el ID del formulario y llamo a la función para cargar datos
 $(document).ready(function () {
     const id = $("#formEditarUsuario").data("id");
     cargarDatosUsuario(id);
@@ -160,7 +158,7 @@ $("#formEditarUsuario").submit(function (e) {
         .put(`/api/usuarios/${id}`, formData)
         .then((response) => {
             alert(response.data.message);
-            // Redirigir o actualizar la vista según lo necesites
+            // Redirijo o actualizo la vista según sea necesario
             window.location.href = "/"; // Ejemplo: redirige a la lista de usuarios
         })
         .catch((error) => {
