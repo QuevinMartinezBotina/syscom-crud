@@ -71,6 +71,11 @@ function obtenerUsuarios() {
     axios
         .get("/api/usuarios")
         .then((response) => {
+            // Destruye la instancia actual de DataTable si existe
+            if ($.fn.DataTable.isDataTable("#tablaUsuarios")) {
+                $("#tablaUsuarios").DataTable().destroy();
+            }
+
             let tbody = "";
             response.data.forEach((usuario) => {
                 tbody += `<tr>
@@ -96,6 +101,9 @@ function obtenerUsuarios() {
                 </tr>`;
             });
             $("#tablaUsuarios tbody").html(tbody);
+
+            // Reinicializa el DataTable
+            $("#tablaUsuarios").DataTable();
         })
         .catch((error) => {
             console.error("Error al obtener usuarios:", error);

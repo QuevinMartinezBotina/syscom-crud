@@ -8,6 +8,12 @@ function obtenerRoles() {
     axios
         .get("/api/roles")
         .then((response) => {
+            // Destruye la instancia actual de DataTable si existe
+            if ($.fn.DataTable.isDataTable("#tablaRoles")) {
+                $("#tablaRoles").DataTable().destroy();
+            }
+
+            // Construye el contenido del tbody con los datos recibidos
             let tbody = "";
             response.data.forEach((role) => {
                 tbody += `<tr>
@@ -20,6 +26,9 @@ function obtenerRoles() {
                 </tr>`;
             });
             $("#tablaRoles tbody").html(tbody);
+
+            // Reinicializa el DataTable
+            $("#tablaRoles").DataTable();
         })
         .catch((error) => {
             console.error("Error al obtener roles:", error);
