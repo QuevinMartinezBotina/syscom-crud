@@ -32,7 +32,7 @@
                 <input type="date" id="fecha_ingreso" name="fecha_ingreso" class="form-control" required>
             </div>
             <div class="form-group">
-                <label for="firma">Firma (Base64)</label>
+                <label for="firma">Firma </label>
                 <input type="text" id="firma" name="firma" class="form-control"
                     placeholder="Código de la firma">
             </div>

@@ -43,7 +43,7 @@
                 </div>
                 <!-- Campo para la firma (opcional) -->
                 <div class="form-group">
-                    <label for="firma">Firma (Base64)</label>
+                    <label for="firma">Firma </label>
                     <input type="text" id="firma" name="firma" class="form-control"
                         placeholder="Código de la firma">
                 </div>
