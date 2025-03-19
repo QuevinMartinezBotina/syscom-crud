@@ -117,5 +117,67 @@ function eliminarUsuario(id) {
 
 // Función para editar usuario (pendiente de implementación)
 function editarUsuario(id) {
-    alert("Funcionalidad de edición pendiente");
+    window.location.href = `/usuarios/${id}/edit`;
 }
+
+// Función para cargar los datos del usuario desde la API
+function cargarDatosUsuario(id) {
+    axios
+        .get(`/api/usuarios/${id}`)
+        .then((response) => {
+            const usuario = response.data;
+            $("#nombre").val(usuario.nombre);
+            $("#correo_electronico").val(usuario.correo_electronico);
+            $("#id_rol").val(usuario.id_rol);
+            $("#fecha_ingreso").val(usuario.fecha_ingreso);
+            $("#firma").val(usuario.firma);
+        })
+        .catch((error) => {
+            console.error("Error al obtener datos del usuario:", error);
+        });
+}
+
+// Al cargar la página, obtenemos el ID del formulario y llamamos a la función para cargar datos
+$(document).ready(function () {
+    const id = $("#formEditarUsuario").data("id");
+    cargarDatosUsuario(id);
+});
+
+// Manejo del envío del formulario para actualizar el usuario
+$("#formEditarUsuario").submit(function (e) {
+    e.preventDefault();
+
+    const id = $("#formEditarUsuario").data("id");
+    const formData = {
+        nombre: $("#nombre").val(),
+        correo_electronico: $("#correo_electronico").val(),
+        id_rol: $("#id_rol").val(),
+        fecha_ingreso: $("#fecha_ingreso").val(),
+        firma: $("#firma").val(),
+    };
+
+    axios
+        .put(`/api/usuarios/${id}`, formData)
+        .then((response) => {
+            alert(response.data.message);
+            // Redirigir o actualizar la vista según lo necesites
+            window.location.href = "/"; // Ejemplo: redirige a la lista de usuarios
+        })
+        .catch((error) => {
+            console.error("Error al actualizar usuario:", error);
+            let mensaje = "Error al actualizar usuario";
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    mensaje = error.response.data.message;
+                }
+                if (error.response.data.errors) {
+                    Object.keys(error.response.data.errors).forEach((campo) => {
+                        mensaje += `\n${campo}: ${error.response.data.errors[
+                            campo
+                        ].join(", ")}`;
+                    });
+                }
+            }
+            alert(mensaje);
+        });
+});

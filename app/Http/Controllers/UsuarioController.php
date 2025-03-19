@@ -22,6 +22,15 @@ class UsuarioController extends Controller
         $this->workdayCalculator = $workdayCalculator;
     }
 
+    /**
+     * Muestra una lista de usuarios activos con sus roles y calcula los días trabajados.
+     *
+     * Este método obtiene todos los usuarios que no tienen una fecha de eliminación,
+     * incluye la relación con el rol de cada usuario y calcula los días trabajados
+     * desde la fecha de ingreso hasta la fecha actual, excluyendo los feriados.
+     *
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con la lista de usuarios y sus días trabajados.
+     */
     public function index()
     {
         $usuarios = Usuario::whereNull('fecha_eliminacion')->with('rol')->get();
@@ -42,6 +51,16 @@ class UsuarioController extends Controller
         return response()->json($usuarios);
     }
 
+    /**
+     * Almacena un nuevo usuario en la base de datos.
+     *
+     * Este método valida los datos de entrada, crea un nuevo usuario en la base de datos,
+     * genera un contrato en formato PDF utilizando Dompdf, guarda el PDF en el almacenamiento
+     * público y actualiza el usuario con la ruta del contrato.
+     *
+     * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene los datos del usuario.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON que indica el resultado de la operación.
+     */
     public function store(Request $request)
     {
         try {
@@ -95,6 +114,14 @@ class UsuarioController extends Controller
     }
 
 
+    /**
+     * Muestra la información de un usuario específico junto con su rol y calcula los días trabajados.
+     *
+     * @param int $id El ID del usuario a mostrar.
+     * @return \Illuminate\Http\JsonResponse La respuesta JSON con la información del usuario.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException Si no se encuentra el usuario con el ID proporcionado.
+     */
     public function show($id)
     {
         $usuario = Usuario::with('rol')->findOrFail($id);
@@ -110,6 +137,16 @@ class UsuarioController extends Controller
         return response()->json($usuario);
     }
 
+    /**
+     * Actualiza un usuario existente en la base de datos.
+     *
+     * @param \Illuminate\Http\Request $request La solicitud HTTP que contiene los datos del usuario.
+     * @param int $id El ID del usuario a actualizar.
+     * @return \Illuminate\Http\JsonResponse Una respuesta JSON que indica el éxito de la operación y los datos del usuario actualizado.
+     *
+     * @throws \Illuminate\Validation\ValidationException Si la validación de los datos falla.
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException Si no se encuentra el usuario con el ID proporcionado.
+     */
     public function update(Request $request, $id)
     {
         $usuario = Usuario::findOrFail($id);
@@ -130,6 +167,13 @@ class UsuarioController extends Controller
         ]);
     }
 
+
+    /**
+     * Elimina un usuario actualizando su fecha de eliminación.
+     *
+     * @param  int  $id  El ID del usuario a eliminar.
+     * @return \Illuminate\Http\JsonResponse  Respuesta JSON con un mensaje de confirmación.
+     */
     public function destroy($id)
     {
         $usuario = Usuario::findOrFail($id);
