@@ -21,13 +21,37 @@ $("#formUsuario").submit(function (e) {
     axios
         .post("/api/usuarios", formData)
         .then((response) => {
-            alert(response.data.message);
-            $("#formUsuario")[0].reset();
-            obtenerUsuarios(); // Actualizo la lista de usuarios
+            // Si el código de estado es 201, mostramos el mensaje de éxito.
+            if (response.status === 201) {
+                alert(response.data.message);
+                $("#formUsuario")[0].reset();
+                // Puedes recargar la tabla o incluso la página si lo prefieres:
+                obtenerUsuarios();
+                // Para recargar la página completa: window.location.reload();
+            } else {
+                // En caso de respuesta inesperada:
+                alert("Operación completada, pero con respuesta inesperada.");
+            }
         })
         .catch((error) => {
+            let mensaje = "Error al crear usuario";
+            // Si hay detalles de error en la respuesta del servidor, los mostramos.
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    mensaje = error.response.data.message;
+                }
+                if (error.response.data.errors) {
+                    Object.keys(error.response.data.errors).forEach((campo) => {
+                        mensaje +=
+                            "\n" +
+                            campo +
+                            ": " +
+                            error.response.data.errors[campo].join(", ");
+                    });
+                }
+            }
             console.error("Error al crear usuario:", error);
-            alert("Error al crear usuario");
+            alert(mensaje);
         });
 });
 

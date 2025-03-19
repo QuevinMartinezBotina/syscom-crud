@@ -4,11 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Usuario;
-use App\Models\Role;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Dompdf\Dompdf;
 use App\Services\HolidayService;
 use App\Services\WorkdayCalculator;
 
@@ -45,35 +44,56 @@ class UsuarioController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'nombre'             => 'required|string|max:255',
-            'correo_electronico' => 'required|email|unique:usuarios,correo_electronico',
-            'id_rol'             => 'required|exists:roles,id',
-            'fecha_ingreso'      => 'required|date',
-            'firma'              => 'nullable|string'
-        ]);
+        try {
+            // Validación de datos
+            $validatedData = $request->validate([
+                'nombre'             => 'required|string|max:255',
+                'correo_electronico' => 'required|email|unique:usuarios,correo_electronico',
+                'id_rol'             => 'required|exists:roles,id',
+                'fecha_ingreso'      => 'required|date',
+                'firma'              => 'nullable|string'
+            ]);
 
-        $usuario = Usuario::create($request->only(
-            'nombre',
-            'correo_electronico',
-            'id_rol',
-            'fecha_ingreso',
-            'firma'
-        ));
+            // Crear el usuario
+            $usuario = Usuario::create($validatedData);
 
-        // Generar contrato PDF
-        $pdf = Pdf::loadView('usuarios.contrato', ['usuario' => $usuario]);
-        $nombreArchivo = 'contratos/contrato_' . $usuario->id . '.pdf';
-        Storage::put('public/' . $nombreArchivo, $pdf->output());
+            // Renderizar la vista Blade a HTML para el contrato
+            $html = view('users.contrato', compact('usuario'))->render();
 
-        // Guardar ruta del contrato
-        $usuario->update(['contrato' => Storage::url($nombreArchivo)]);
+            // Instanciar Dompdf
+            $dompdf = new Dompdf();
+            $dompdf->loadHtml($html);
+            // Opcional: configurar tamaño de papel y orientación
+            $dompdf->setPaper('A4', 'portrait');
+            $dompdf->render();
 
-        return response()->json([
-            'message' => 'Usuario creado exitosamente',
-            'usuario' => $usuario
-        ], 201);
+            // Obtener el contenido PDF generado
+            $pdfContent = $dompdf->output();
+
+            // Definir el nombre y ruta para guardar el PDF
+            $nombreArchivo = 'contratos/contrato_' . $usuario->id . '.pdf';
+            Storage::disk('public')->put($nombreArchivo, $pdfContent);
+
+            // Actualizar el usuario con la ruta del contrato
+            $usuario->update(['contrato' => Storage::url($nombreArchivo)]);
+
+            return response()->json([
+                'message' => 'Usuario creado exitosamente',
+                'usuario' => $usuario
+            ], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al crear usuario',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
+
 
     public function show($id)
     {
