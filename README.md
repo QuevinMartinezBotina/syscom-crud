@@ -1,66 +1,200 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Aquí te dejo un ejemplo completo y organizado en un solo bloque Markdown para que puedas copiar y pegar directamente en tu archivo README.md:
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+```markdown
+# Gestión de Usuarios y Roles – CRUD con API en Laravel
 
-## About Laravel
+Este proyecto es un CRUD desarrollado en **Laravel** para la gestión de usuarios y roles, que además genera contratos en formato PDF mediante una API. La arquitectura se ha diseñado para no limitarse a un modelo tradicional MVC, permitiendo que los endpoints puedan ser consumidos por otros clientes (por ejemplo, aplicaciones móviles) y manteniendo la lógica de negocio centralizada.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Además, se implementa la **eliminación suave** (soft delete) para los usuarios. Cuando se "elimina" un usuario, en realidad se establece una fecha de eliminación, ocultando el registro en la vista principal pero conservándolo en la base de datos para auditoría e historial.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Requisitos del Sistema
 
-## Learning Laravel
+Para ejecutar este proyecto se requiere:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **PHP 7.4+**
+- **Composer**
+- **MySQL** (u otro gestor de bases de datos compatible)
+- **XAMPP**, **WAMP** o similar para entorno local
+- **Node.js y npm** (opcional, si se utilizan herramientas como Vite o Laravel Mix para compilar assets)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Instalación y Configuración
 
-## Laravel Sponsors
+Sigue estos pasos para instalar y configurar el proyecto en tu computador:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+1. **Clonar el repositorio**
 
-### Premium Partners
+   ```bash
+   git clone [https://github.com/tu-usuario/tu-repositorio.git](https://github.com/QuevinMartinezBotina/syscom-crud.git)
+   cd tu-repositorio
+   ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+2. **Instalar las dependencias de Composer**
 
-## Contributing
+   ```bash
+   composer install
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. **Configurar el archivo .env**
 
-## Code of Conduct
+   Copia el archivo de ejemplo y edítalo:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+   ```bash
+   cp .env.example .env
+   ```
 
-## Security Vulnerabilities
+   Configura los siguientes parámetros según tu entorno:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+   ```dotenv
+   APP_NAME=GestiónUsuariosRoles
+   APP_ENV=local
+   APP_KEY=base64:...
+   APP_DEBUG=true
+   APP_URL=http://localhost
 
-## License
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=nombre_basedatos
+   DB_USERNAME=tu_usuario
+   DB_PASSWORD=tu_contraseña
+   ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+4. **Generar la clave de la aplicación**
+
+   ```bash
+   php artisan key:generate
+   ```
+
+5. **Ejecutar las migraciones**
+
+   Esto creará las tablas necesarias (usuarios y roles):
+
+   ```bash
+   php artisan migrate
+   ```
+
+   Si dispones de un backup de la base de datos, inclúyelo en la carpeta `backup/` y restaura la base de datos.
+
+6. **Crear el enlace simbólico para el almacenamiento**
+
+   Esto es necesario para acceder a los archivos generados (por ejemplo, los PDFs de contrato):
+
+   ```bash
+   php artisan storage:link
+   ```
+
+7. **Instalar dependencias de Node (opcional)**
+
+   Si el proyecto utiliza Vite o Laravel Mix para compilar assets:
+
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+8. **Iniciar el servidor de desarrollo**
+
+   ```bash
+   php artisan serve
+   ```
+
+   El proyecto estará disponible en `http://127.0.0.1:8000`.
+
+---
+
+## Uso del Proyecto
+
+- **Gestión de Usuarios:**  
+  - Permite crear, actualizar, listar y "eliminar" usuarios.  
+  - Al crear o actualizar un usuario se genera un contrato en PDF con la información actualizada.  
+  - La eliminación es suave: en lugar de borrar el registro, se establece una fecha de eliminación, ocultando el usuario en la vista sin perder la información en la base de datos.
+
+- **Gestión de Roles:**  
+  - Permite gestionar (crear, editar y eliminar) roles que se asignan a los usuarios.  
+  - Los roles se cargan dinámicamente en los formularios de creación y edición de usuarios, permitiendo que cualquier cambio en los roles se refleje automáticamente.
+
+- **Arquitectura API:**  
+  Los endpoints están disponibles en:
+  - Usuarios: `/api/usuarios`
+  - Roles: `/api/roles`  
+  Esto permite que los endpoints sean consumidos por otros clientes o aplicaciones, sin depender únicamente de la interfaz web.
+
+---
+
+## Librerías Utilizadas
+
+- **[Laravel](https://laravel.com/):** Framework PHP para el desarrollo.
+- **[dompdf/dompdf](https://packagist.org/packages/dompdf/dompdf):** Para la generación de PDFs de contratos.
+- **[Carbon](https://carbon.nesbot.com/):** Manejo y cálculo de fechas.
+- **[Axios](https://axios-http.com/):** Para realizar peticiones HTTP desde el frontend.
+- **[jQuery](https://jquery.com/):** Para la manipulación del DOM y base de DataTables.
+- **[DataTables](https://datatables.net/):** Para la presentación, filtrado y búsqueda en las tablas.
+- **[Bootstrap](https://getbootstrap.com/):** Framework CSS para el diseño responsivo.
+
+---
+
+## Comandos Importantes
+
+- **Instalación de dependencias de Composer:**
+
+  ```bash
+  composer install
+  ```
+
+- **Generar clave de la aplicación:**
+
+  ```bash
+  php artisan key:generate
+  ```
+
+- **Ejecutar migraciones:**
+
+  ```bash
+  php artisan migrate
+  ```
+
+- **Crear enlace simbólico para storage:**
+
+  ```bash
+  php artisan storage:link
+  ```
+
+- **Iniciar el servidor de desarrollo:**
+
+  ```bash
+  php artisan serve
+  ```
+
+- **Instalar dependencias de Node y compilar assets (si aplica):**
+
+  ```bash
+  npm install
+  npm run dev
+  ```
+
+---
+
+## Backup de la Base de Datos
+
+El backup de la base de datos se incluye en la carpeta `backup/`. Para restaurarlo:
+
+1. Abre tu herramienta de gestión (phpMyAdmin, MySQL Workbench, etc.).
+2. Crea o utiliza la base de datos configurada en tu archivo `.env`.
+3. Importa el archivo SQL ubicado en `backup/database.sql`.
+
+---
+
+## Notas Adicionales
+
+- **Eliminación Suave:**  
+  Los usuarios no se eliminan físicamente; en cambio, se actualiza el campo `fecha_eliminacion` para ocultarlos de la vista principal. Esto permite conservar información para auditorías e historiales, siguiendo buenas prácticas.
+
+- **Modularidad y Escalabilidad:**  
+  La API se ha diseñado para que sus endpoints puedan ser consumidos por otros clientes, permitiendo ampliar o integrar nuevas funcionalidades sin depender exclusivamente de la interfaz web.
+
+- **Instrucciones de Uso:**  
+  Sigue los pasos anteriores para instalar, configurar y ejecutar el proyecto en tu entorno local. Si encuentras errores, revisa los logs en `storage/logs/laravel.log` y asegúrate de que el archivo `.env` esté configurado correctamente.
