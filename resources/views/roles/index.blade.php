@@ -12,6 +12,8 @@
     <div class="container mt-5">
         <h1>Gestión de Roles</h1>
         <button class="btn btn-primary mb-3" onclick="mostrarFormularioCreacion()">Crear Nuevo Rol</button>
+        <a href="/" class="btn btn-info mb-3">Gestionar usuarios</a>
+
 
         <!-- Formulario para crear rol (oculto por defecto) -->
         <div id="formularioCreacion" style="display:none;">
