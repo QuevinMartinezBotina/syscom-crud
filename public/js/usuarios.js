@@ -179,3 +179,21 @@ $("#formEditarUsuario").submit(function (e) {
             alert(mensaje);
         });
 });
+
+// Función para alternar la visualización del formulario de creación de usuario
+function toggleFormularioUsuario() {
+    const formulario = document.getElementById("formularioUsuario");
+    if (
+        formulario.style.display === "none" ||
+        formulario.style.display === ""
+    ) {
+        formulario.style.display = "block";
+    } else {
+        formulario.style.display = "none";
+    }
+}
+
+// Función para ocultar el formulario de creación (usada en el botón Cancelar)
+function ocultarFormularioUsuario() {
+    document.getElementById("formularioUsuario").style.display = "none";
+}

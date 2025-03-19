@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <title>Gestión de Usuarios Syscom Colombia</title>
@@ -9,43 +8,47 @@
     <!-- DataTables CSS (opcional para mejorar la tabla) -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
 </head>
-
 <body>
     <div class="container mt-5">
         <h1>Gestión de Usuarios</h1>
         <!-- Botón para redirigir a la sección de roles -->
         <a href="/roles" class="btn btn-info mb-3">Gestionar Roles</a>
 
-        <!-- Formulario para crear usuario -->
-        <form id="formUsuario" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="nombre">Nombre</label>
-                <input type="text" id="nombre" name="nombre" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="correo_electronico">Correo Electrónico</label>
-                <input type="email" id="correo_electronico" name="correo_electronico" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="id_rol">Cargo</label>
-                <select id="id_rol" name="id_rol" class="form-control" required>
-                    <!-- Puedes precargar estos valores o generarlos dinámicamente -->
-                    <option value="1">Empleado</option>
-                    <option value="2">Jefe</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="fecha_ingreso">Fecha de Ingreso</label>
-                <input type="date" id="fecha_ingreso" name="fecha_ingreso" class="form-control" required>
-            </div>
-            <!-- Campo oculto o widget para la firma digital (opcional) -->
-            <div class="form-group">
-                <label for="firma">Firma (Base64)</label>
-                <input type="text" id="firma" name="firma" class="form-control"
-                    placeholder="Código de la firma">
-            </div>
-            <button type="submit" class="btn btn-primary">Crear Usuario</button>
-        </form>
+        <!-- Botón para mostrar/ocultar el formulario de creación de usuario -->
+        <button class="btn btn-primary mb-3" onclick="toggleFormularioUsuario()">Crear Nuevo Usuario</button>
+
+        <!-- Formulario para crear usuario (oculto por defecto) -->
+        <div id="formularioUsuario" style="display: none;">
+            <form id="formUsuario" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="correo_electronico">Correo Electrónico</label>
+                    <input type="email" id="correo_electronico" name="correo_electronico" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="id_rol">Cargo</label>
+                    <select id="id_rol" name="id_rol" class="form-control" required>
+                        <!-- Puedes precargar estos valores o generarlos dinámicamente -->
+                        <option value="1">Empleado</option>
+                        <option value="2">Jefe</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_ingreso">Fecha de Ingreso</label>
+                    <input type="date" id="fecha_ingreso" name="fecha_ingreso" class="form-control" required>
+                </div>
+                <!-- Campo oculto o widget para la firma digital (opcional) -->
+                <div class="form-group">
+                    <label for="firma">Firma (Base64)</label>
+                    <input type="text" id="firma" name="firma" class="form-control" placeholder="Código de la firma">
+                </div>
+                <button type="submit" class="btn btn-primary">Crear Usuario</button>
+                <button type="button" class="btn btn-secondary" onclick="ocultarFormularioUsuario()">Cancelar</button>
+            </form>
+        </div>
 
         <hr>
 
@@ -75,7 +78,8 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+    <!-- Archivo JS para usuarios -->
     <script src="{{ asset('js/usuarios.js') }}"></script>
-</body>
 
+</body>
 </html>
