@@ -13,6 +13,9 @@
 <body>
     <div class="container mt-5">
         <h1>Gestión de Usuarios</h1>
+        <!-- Botón para redirigir a la sección de roles -->
+        <a href="/roles" class="btn btn-info mb-3">Gestionar Roles</a>
+
         <!-- Formulario para crear usuario -->
         <form id="formUsuario" enctype="multipart/form-data">
             <div class="form-group">
@@ -73,7 +76,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script src="{{ asset('js/usuarios.js') }}"></script>
-
 </body>
 
 </html>
