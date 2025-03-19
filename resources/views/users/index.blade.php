@@ -6,8 +6,8 @@
     <title>Gestión de Usuarios Syscom Colombia</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- DataTables CSS (opcional para mejorar la tabla) -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <!-- DataTables CSS (versión actualizada) -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
 </head>
 
 <body>
@@ -37,12 +37,11 @@
                         <option value="">Seleccione un cargo</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label for="fecha_ingreso">Fecha de Ingreso</label>
                     <input type="date" id="fecha_ingreso" name="fecha_ingreso" class="form-control" required>
                 </div>
-                <!-- Campo oculto o widget para la firma digital (opcional) -->
+                <!-- Campo para la firma (opcional) -->
                 <div class="form-group">
                     <label for="firma">Firma (Base64)</label>
                     <input type="text" id="firma" name="firma" class="form-control"
@@ -75,10 +74,13 @@
         </table>
     </div>
 
-    <!-- jQuery, DataTables, Axios y Bootstrap JS -->
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <!-- DataTables (versión actualizada) -->
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <!-- Axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Bootstrap JS -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <!-- Archivo JS para usuarios -->
