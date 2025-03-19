@@ -63,7 +63,7 @@
         <p>Por medio de la presente, se certifica que el Sr./Sra. <strong>{{ $usuario->nombre }}</strong>, con correo
             electrónico <strong>{{ $usuario->correo_electronico }}</strong>, ha trabajado en nuestra empresa
             desempeñando el
-            cargo de <strong>{{ $usuario->id_rol }}</strong> desde el <strong>{{ $usuario->fecha_ingreso }}</strong>.
+            cargo de <strong>{{ $usuario->rol->nombre_cargo }}</strong> desde el <strong>{{ $usuario->fecha_ingreso }}</strong>.
         </p>
         <p>Durante su tiempo en nuestra empresa, el Sr./Sra. <strong>{{ $usuario->nombre }}</strong> ha demostrado ser
             un/a
