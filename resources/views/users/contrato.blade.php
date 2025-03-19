@@ -58,7 +58,7 @@
 
 <body>
     <div class="container">
-        <h1>Carta de Experiencia Laboral</h1>
+        <h1>Carta de Contrato Laboral</h1>
         <p>A quien corresponda,</p>
         <p>Por medio de la presente, se certifica que el Sr./Sra. <strong>{{ $usuario->nombre }}</strong>, con correo
             electrónico <strong>{{ $usuario->correo_electronico }}</strong>, ha trabajado en nuestra empresa

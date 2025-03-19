@@ -159,13 +159,32 @@ class UsuarioController extends Controller
             'firma'              => 'nullable|string'
         ]);
 
+        // Actualizar los datos del usuario
         $usuario->update($request->all());
 
+        // Generar el nuevo contrato PDF con los datos actualizados
+        $html = view('users.contrato', compact('usuario'))->render();
+
+        // Instanciar Dompdf y configurar la generación del PDF
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        $pdfContent = $dompdf->output();
+
+        // Definir el nombre y ruta para guardar el PDF
+        $nombreArchivo = 'contratos/contrato_' . $usuario->id . '.pdf';
+        Storage::disk('public')->put($nombreArchivo, $pdfContent);
+
+        // Actualizar el usuario con la ruta del nuevo contrato
+        $usuario->update(['contrato' => Storage::url($nombreArchivo)]);
+
         return response()->json([
-            'message' => 'Usuario actualizado',
+            'message' => 'Usuario actualizado y contrato actualizado',
             'usuario' => $usuario
         ]);
     }
+
 
 
     /**

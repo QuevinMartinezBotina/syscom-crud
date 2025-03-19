@@ -2,6 +2,7 @@
 $(document).ready(function () {
     $("#tablaUsuarios").DataTable();
     obtenerUsuarios();
+    obtenerRolesParaSelect(); // Cargar dinámicamente los roles en el select
 });
 
 // Manejo el envío del formulario para crear un usuario
@@ -180,6 +181,21 @@ $("#formEditarUsuario").submit(function (e) {
         });
 });
 
+function obtenerRolesParaSelect() {
+    axios
+        .get("/api/roles")
+        .then((response) => {
+            let options = '<option value="">Seleccione un cargo</option>';
+            response.data.forEach((role) => {
+                options += `<option value="${role.id}">${role.nombre_cargo}</option>`;
+            });
+            $("#id_rol").html(options);
+        })
+        .catch((error) => {
+            console.error("Error al obtener roles:", error);
+        });
+}
+
 // Función para alternar la visualización del formulario de creación de usuario
 function toggleFormularioUsuario() {
     const formulario = document.getElementById("formularioUsuario");
@@ -192,6 +208,15 @@ function toggleFormularioUsuario() {
         formulario.style.display = "none";
     }
 }
+
+$(document).ready(function () {
+    // Llama a la función para cargar dinámicamente las opciones de roles en el select
+    obtenerRolesParaSelect();
+
+    // Obtiene el ID desde el atributo data-id del formulario y carga los datos del usuario
+    const id = $("#formEditarUsuario").data("id");
+    cargarDatosUsuario(id);
+});
 
 // Función para ocultar el formulario de creación (usada en el botón Cancelar)
 function ocultarFormularioUsuario() {

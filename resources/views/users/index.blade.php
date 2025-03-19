@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Gestión de Usuarios Syscom Colombia</title>
@@ -8,6 +9,7 @@
     <!-- DataTables CSS (opcional para mejorar la tabla) -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
 </head>
+
 <body>
     <div class="container mt-5">
         <h1>Gestión de Usuarios</h1>
@@ -26,16 +28,16 @@
                 </div>
                 <div class="form-group">
                     <label for="correo_electronico">Correo Electrónico</label>
-                    <input type="email" id="correo_electronico" name="correo_electronico" class="form-control" required>
+                    <input type="email" id="correo_electronico" name="correo_electronico" class="form-control"
+                        required>
                 </div>
                 <div class="form-group">
                     <label for="id_rol">Cargo</label>
                     <select id="id_rol" name="id_rol" class="form-control" required>
-                        <!-- Puedes precargar estos valores o generarlos dinámicamente -->
-                        <option value="1">Empleado</option>
-                        <option value="2">Jefe</option>
+                        <option value="">Seleccione un cargo</option>
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label for="fecha_ingreso">Fecha de Ingreso</label>
                     <input type="date" id="fecha_ingreso" name="fecha_ingreso" class="form-control" required>
@@ -43,7 +45,8 @@
                 <!-- Campo oculto o widget para la firma digital (opcional) -->
                 <div class="form-group">
                     <label for="firma">Firma (Base64)</label>
-                    <input type="text" id="firma" name="firma" class="form-control" placeholder="Código de la firma">
+                    <input type="text" id="firma" name="firma" class="form-control"
+                        placeholder="Código de la firma">
                 </div>
                 <button type="submit" class="btn btn-primary">Crear Usuario</button>
                 <button type="button" class="btn btn-secondary" onclick="ocultarFormularioUsuario()">Cancelar</button>
@@ -82,4 +85,5 @@
     <script src="{{ asset('js/usuarios.js') }}"></script>
 
 </body>
+
 </html>

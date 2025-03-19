@@ -24,8 +24,7 @@
             <div class="form-group">
                 <label for="id_rol">Cargo</label>
                 <select id="id_rol" name="id_rol" class="form-control" required>
-                    <option value="1">Empleado</option>
-                    <option value="2">Jefe</option>
+                    <option value="">Seleccione un cargo</option>
                 </select>
             </div>
             <div class="form-group">
