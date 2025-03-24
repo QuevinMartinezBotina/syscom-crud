@@ -6,11 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Usuario;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Dompdf\Dompdf;
 use App\Services\HolidayService;
 use App\Services\WorkdayCalculator;
 use App\Services\GeneratePdf;
+
 
 class UsuarioController extends Controller
 {
@@ -32,6 +31,17 @@ class UsuarioController extends Controller
         $this->generatePdf = $generatePdf;
     }
 
+    private function asignarDiasTrabajados($usuario)
+    {
+        $feriados = $this->holidayService->obtenerFeriados(2025);
+        $usuario->dias_trabajados = $this->workdayCalculator->calcularDiasTrabajados(
+            $usuario->fecha_ingreso,
+            now(),
+            $feriados
+        );
+        return $usuario;
+    }
+
     /**
      * Muestra una lista de usuarios activos con sus roles y calcula los días trabajados.
      *
@@ -41,21 +51,13 @@ class UsuarioController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse Respuesta JSON con la lista de usuarios y sus días trabajados.
      */
+
     public function index()
     {
         $usuarios = Usuario::whereNull('fecha_eliminacion')->with('rol')->get();
 
-        // Obtener feriados desde el servicio
-        $feriados = $this->holidayService->obtenerFeriados(2025);
-
-        // Calcular días trabajados con el WorkdayCalculator
-        $usuarios->map(function ($usuario) use ($feriados) {
-            $usuario->dias_trabajados = $this->workdayCalculator->calcularDiasTrabajados(
-                $usuario->fecha_ingreso,
-                now(), // o Carbon::now()
-                $feriados
-            );
-            return $usuario;
+        $usuarios->transform(function ($usuario) {
+            return $this->asignarDiasTrabajados($usuario);
         });
 
         return response()->json($usuarios);
@@ -122,13 +124,7 @@ class UsuarioController extends Controller
     {
         $usuario = Usuario::with('rol')->findOrFail($id);
 
-        // Calcular días trabajados
-        $feriados = $this->holidayService->obtenerFeriados(2025);
-        $usuario->dias_trabajados = $this->workdayCalculator->calcularDiasTrabajados(
-            $usuario->fecha_ingreso,
-            now(),
-            $feriados
-        );
+        $this->asignarDiasTrabajados($usuario);
 
         return response()->json($usuario);
     }
