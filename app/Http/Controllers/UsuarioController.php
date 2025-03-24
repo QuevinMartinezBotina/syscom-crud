@@ -10,16 +10,26 @@ use Illuminate\Support\Facades\Storage;
 use Dompdf\Dompdf;
 use App\Services\HolidayService;
 use App\Services\WorkdayCalculator;
+use App\Services\GeneratePdf;
 
 class UsuarioController extends Controller
 {
     private $holidayService;
     private $workdayCalculator;
+    private $generatePdf;
 
-    public function __construct(HolidayService $holidayService, WorkdayCalculator $workdayCalculator)
+    /**
+     * UsuarioController constructor.
+     *
+     * @param HolidayService $holidayService Servicio para manejar días festivos.
+     * @param WorkdayCalculator $workdayCalculator Calculadora para determinar días laborales.
+     * @param GeneratePdf $generatePdf Servicio para generar PDFs.
+     */
+    public function __construct(HolidayService $holidayService, WorkdayCalculator $workdayCalculator, GeneratePdf $generatePdf)
     {
         $this->holidayService = $holidayService;
         $this->workdayCalculator = $workdayCalculator;
+        $this->generatePdf = $generatePdf;
     }
 
     /**
@@ -76,25 +86,11 @@ class UsuarioController extends Controller
             // Crear el usuario
             $usuario = Usuario::create($validatedData);
 
-            // Renderizar la vista Blade a HTML para el contrato
-            $html = view('users.contrato', compact('usuario'))->render();
+            // Generar el contrato PDF
+            $pdfUrl = $this->generatePdf->generarContrato('users.contrato', compact('usuario'), $usuario->id);
 
-            // Instanciar Dompdf
-            $dompdf = new Dompdf();
-            $dompdf->loadHtml($html);
-            // Opcional: configurar tamaño de papel y orientación
-            $dompdf->setPaper('A4', 'portrait');
-            $dompdf->render();
-
-            // Obtener el contenido PDF generado
-            $pdfContent = $dompdf->output();
-
-            // Definir el nombre y ruta para guardar el PDF
-            $nombreArchivo = 'contratos/contrato_' . $usuario->id . '.pdf';
-            Storage::disk('public')->put($nombreArchivo, $pdfContent);
-
-            // Actualizar el usuario con la ruta del contrato
-            $usuario->update(['contrato' => Storage::url($nombreArchivo)]);
+            // Actualizar el usuario con la ruta del contrato generado
+            $usuario->update(['contrato' => $pdfUrl]);
 
             return response()->json([
                 'message' => 'Usuario creado exitosamente',
@@ -162,22 +158,11 @@ class UsuarioController extends Controller
         // Actualizar los datos del usuario
         $usuario->update($request->all());
 
-        // Generar el nuevo contrato PDF con los datos actualizados
-        $html = view('users.contrato', compact('usuario'))->render();
+        // Generar el contrato PDF
+        $pdfUrl = $this->generatePdf->generarContrato('users.contrato', compact('usuario'), $usuario->id);
 
-        // Instanciar Dompdf y configurar la generación del PDF
-        $dompdf = new Dompdf();
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
-        $pdfContent = $dompdf->output();
-
-        // Definir el nombre y ruta para guardar el PDF
-        $nombreArchivo = 'contratos/contrato_' . $usuario->id . '.pdf';
-        Storage::disk('public')->put($nombreArchivo, $pdfContent);
-
-        // Actualizar el usuario con la ruta del nuevo contrato
-        $usuario->update(['contrato' => Storage::url($nombreArchivo)]);
+        // Actualizar el usuario con la ruta del contrato generado
+        $usuario->update(['contrato' => $pdfUrl]);
 
         return response()->json([
             'message' => 'Usuario actualizado y contrato actualizado',
