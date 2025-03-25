@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Services\HolidayService;
 use App\Services\WorkdayCalculator;
 use App\Services\GeneratePdf;
+use Illuminate\Support\Facades\Storage;
 
 
 class UsuarioController extends Controller
@@ -82,13 +83,41 @@ class UsuarioController extends Controller
                 'correo_electronico' => 'required|email|unique:usuarios,correo_electronico',
                 'id_rol'             => 'required|exists:roles,id',
                 'fecha_ingreso'      => 'required|date',
-                'firma'              => 'nullable|string'
+                'firma'              => 'nullable|string' // Base64
             ]);
 
-            // Crear el usuario
+            // Extrae la firma y la remueve de los datos a guardar
+            $firmaBase64 = $validatedData['firma'] ?? null;
+            unset($validatedData['firma']);
+
+            // Crear el usuario sin la firma
             $usuario = Usuario::create($validatedData);
 
-            // Generar el contrato PDF
+            // Si se envió una firma, decodificarla y guardarla como imagen
+            if ($firmaBase64) {
+                // Eliminar el prefijo "data:image/png;base64,"
+                $firmaBase64 = preg_replace('/^data:image\/\w+;base64,/', '', $firmaBase64);
+                $firmaDecoded = base64_decode($firmaBase64);
+
+                // Define un nombre de archivo único (puedes personalizarlo)
+                $nombreArchivo = 'firmas/firma_usuario_' . $usuario->id . '.png';
+
+                // Verifica que el directorio exista, si no, créalo
+                if (!Storage::disk('public')->exists('firmas')) {
+                    Storage::disk('public')->makeDirectory('firmas');
+                }
+
+                // Guarda la imagen en storage/app/public/firmas/
+                Storage::disk('public')->put($nombreArchivo, $firmaDecoded);
+
+                // Actualiza la columna 'firma' con la ruta de la imagen
+                $usuario->update(['firma' => $nombreArchivo]);
+            }
+
+            // Cargar la relación "rol" para usarla en la vista del PDF
+            $usuario->load('rol');
+
+            // Generar el contrato PDF (se usa la vista 'users.contrato')
             $pdfUrl = $this->generatePdf->generarContrato('users.contrato', compact('usuario'), $usuario->id);
 
             // Actualizar el usuario con la ruta del contrato generado
@@ -110,6 +139,7 @@ class UsuarioController extends Controller
             ], 500);
         }
     }
+
 
 
     /**
@@ -151,13 +181,34 @@ class UsuarioController extends Controller
             'firma'              => 'nullable|string'
         ]);
 
-        // Actualizar los datos del usuario
-        $usuario->update($request->all());
+        $datos = $request->all();
 
-        // Generar el contrato PDF
+        // Si se envió una firma nueva, procesarla
+        if (!empty($datos['firma'])) {
+            $firmaBase64 = $datos['firma'];
+            $firmaBase64 = preg_replace('/^data:image\/\w+;base64,/', '', $firmaBase64);
+            $firmaDecoded = base64_decode($firmaBase64);
+
+            $nombreArchivo = 'firmas/firma_usuario_' . $usuario->id . '.png';
+
+            if (!Storage::disk('public')->exists('firmas')) {
+                Storage::disk('public')->makeDirectory('firmas');
+            }
+
+            Storage::disk('public')->put($nombreArchivo, $firmaDecoded);
+
+            // Sustituye la firma en los datos por la ruta del archivo
+            $datos['firma'] = $nombreArchivo;
+        }
+
+        // Actualizar el usuario con los nuevos datos
+        $usuario->update($datos);
+
+        // Cargar la relación "rol" para usarla en la vista del PDF
+        $usuario->load('rol');
+
+        // Generar el contrato PDF actualizado
         $pdfUrl = $this->generatePdf->generarContrato('users.contrato', compact('usuario'), $usuario->id);
-
-        // Actualizar el usuario con la ruta del contrato generado
         $usuario->update(['contrato' => $pdfUrl]);
 
         return response()->json([
@@ -165,6 +216,7 @@ class UsuarioController extends Controller
             'usuario' => $usuario
         ]);
     }
+
 
 
 

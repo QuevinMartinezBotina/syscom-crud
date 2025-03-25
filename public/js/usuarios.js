@@ -1,8 +1,27 @@
-// Inicializo DataTable y obtengo los usuarios al cargar el documento
+let signaturePad;
+
 $(document).ready(function () {
+    // Inicializa DataTable y carga usuarios
     $("#tablaUsuarios").DataTable();
     obtenerUsuarios();
-    obtenerRolesParaSelect(); // Cargar dinámicamente los roles en el select
+    obtenerRolesParaSelect(); // ...
+
+    // 1. Selecciona el canvas
+    const canvas = document.getElementById("signatureCanvas");
+    // 2. Inicializa signaturePad
+    if (canvas) {
+        signaturePad = new SignaturePad(canvas, {
+            backgroundColor: "rgba(255,255,255,0)", // Fondo transparente (o blanco)
+            penColor: "rgb(0,0,0)", // Color de la firma
+        });
+    }
+
+    // 3. Botón para borrar la firma
+    $("#clearSignature").click(function () {
+        if (signaturePad) {
+            signaturePad.clear();
+        }
+    });
 });
 
 function toggleFormularioUsuario() {
@@ -21,32 +40,39 @@ function ocultarFormularioUsuario() {
 $("#formUsuario").submit(function (e) {
     e.preventDefault();
 
+    // Si el usuario dibujó algo, lo convertimos a Base64
+    let firmaBase64 = "";
+    if (signaturePad && !signaturePad.isEmpty()) {
+        firmaBase64 = signaturePad.toDataURL("image/png");
+    }
+
+    // Construimos el formData
     const formData = {
         nombre: $("#nombre").val(),
         correo_electronico: $("#correo_electronico").val(),
         id_rol: $("#id_rol").val(),
         fecha_ingreso: $("#fecha_ingreso").val(),
-        firma: $("#firma").val(),
+        firma: firmaBase64, // Enviamos la firma como base64
     };
 
     axios
         .post("/api/usuarios", formData)
         .then((response) => {
-            // Si el código de estado es 201, muestro el mensaje de éxito.
             if (response.status === 201) {
                 alert(response.data.message);
                 $("#formUsuario")[0].reset();
-                // Recargo la tabla de usuarios
+                // Limpia la firma en el canvas
+                if (signaturePad) {
+                    signaturePad.clear();
+                }
+                // Recarga la tabla
                 obtenerUsuarios();
-                // Para recargar la página completa: window.location.reload();
             } else {
-                // En caso de respuesta inesperada:
                 alert("Operación completada, pero con respuesta inesperada.");
             }
         })
         .catch((error) => {
             let mensaje = "Error al crear usuario";
-            // Si hay detalles de error en la respuesta del servidor, los muestro.
             if (error.response && error.response.data) {
                 if (error.response.data.message) {
                     mensaje = error.response.data.message;

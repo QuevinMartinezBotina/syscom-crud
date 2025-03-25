@@ -22,6 +22,7 @@ class GeneratePdf
 
         // Instanciar Dompdf y configurar la generación del PDF
         $dompdf = new Dompdf();
+        $dompdf->set_option('isHtml5ParserEnabled', true);
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();

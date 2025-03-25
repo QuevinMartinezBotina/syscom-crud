@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- DataTables CSS (versión actualizada) -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <!-- Para firma digital -->
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 </head>
 
 <body>
@@ -41,12 +43,17 @@
                     <label for="fecha_ingreso">Fecha de Ingreso</label>
                     <input type="date" id="fecha_ingreso" name="fecha_ingreso" class="form-control" required>
                 </div>
-                <!-- Campo para la firma (opcional) -->
+                <!-- Campo de firma digital con canvas -->
                 <div class="form-group">
-                    <label for="firma">Firma </label>
-                    <input type="text" id="firma" name="firma" class="form-control"
-                        placeholder="Código de la firma">
+                    <label for="signatureCanvas">Firma Digital</label>
+                    <canvas id="signatureCanvas" width="400" height="200" style="border:1px solid #000;"></canvas>
+                    <button type="button" class="btn btn-secondary" id="clearSignature">Borrar Firma</button>
                 </div>
+
+                <!-- Campo oculto para almacenar la firma en Base64 antes de enviar -->
+                <input type="hidden" id="firma" name="firma">
+
+
                 <button type="submit" class="btn btn-primary">Crear Usuario</button>
                 <button type="button" class="btn btn-secondary" onclick="ocultarFormularioUsuario()">Cancelar</button>
             </form>
@@ -85,6 +92,7 @@
 
     <!-- Archivo JS para usuarios -->
     <script src="{{ asset('js/usuarios.js') }}"></script>
+
 
 </body>
 

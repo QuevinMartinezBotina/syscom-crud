@@ -63,7 +63,8 @@
         <p>Por medio de la presente, se certifica que el Sr./Sra. <strong>{{ $usuario->nombre }}</strong>, con correo
             electrónico <strong>{{ $usuario->correo_electronico }}</strong>, ha trabajado en nuestra empresa
             desempeñando el
-            cargo de <strong>{{ $usuario->rol->nombre_cargo }}</strong> desde el <strong>{{ $usuario->fecha_ingreso }}</strong>.
+            cargo de <strong>{{ $usuario->rol->nombre_cargo }}</strong> desde el
+            <strong>{{ $usuario->fecha_ingreso }}</strong>.
         </p>
         <p>Durante su tiempo en nuestra empresa, el Sr./Sra. <strong>{{ $usuario->nombre }}</strong> ha demostrado ser
             un/a
@@ -72,9 +73,13 @@
         </p>
         @if ($usuario->firma)
             <div class="signature">
-                <p><strong>Firma: {{ $usuario->firma }}</strong></p>
+                <!-- Cargar la imagen desde storage, suponiendo que tienes el storage link configurado -->
+                <img src="{{ public_path('storage/' . $usuario->firma) }}" alt="Firma del usuario"
+                    style="max-width: 300px;">
             </div>
         @endif
+
+
         <div class="footer">
             <p>Atentamente,</p>
             <p><strong>Syscom</strong></p>
